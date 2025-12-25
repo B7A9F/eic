@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { phonemize } from "phonemize";
 
 export default function Home() {
   const [inputText, setInputText] = useState("");
@@ -9,10 +8,12 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
       if (inputText.trim()) {
         setIsLoading(true);
         try {
+          // Dynamic import to avoid SSR issues
+          const { phonemize } = await import("phonemize");
           const phonetic = phonemize(inputText);
           setPhoneticOutput(phonetic);
         } catch (error) {
