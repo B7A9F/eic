@@ -12,10 +12,21 @@ export default function Home() {
       if (inputText.trim()) {
         setIsLoading(true);
         try {
-          // Dynamic import to avoid SSR issues
-          const { phonemize } = await import("phonemize");
-          const phonetic = phonemize(inputText);
-          setPhoneticOutput(phonetic);
+          // Call API route instead of importing phonemize client-side
+          const response = await fetch("/api/phonemize", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ text: inputText }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to phonemize text");
+          }
+
+          const data = await response.json();
+          setPhoneticOutput(data.phonetic);
         } catch (error) {
           console.error("Error phonemizing text:", error);
           setPhoneticOutput("Error processing text");
