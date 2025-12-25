@@ -1,19 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Exclude phonemize from server bundle - it's only used client-side
-  serverExternalPackages: ["phonemize"],
-  // Skip type checking during build to speed it up
-  typescript: {
-    ignoreBuildErrors: false,
-  },
   // Skip ESLint during build
   eslint: {
     ignoreDuringBuilds: true,
   },
   // Ensure phonemize is only loaded on client side
   webpack: (config, { isServer }) => {
-    if (!isServer) {
+    if (isServer) {
+      // Exclude phonemize from server bundle completely
+      config.externals = config.externals || [];
+      if (Array.isArray(config.externals)) {
+        config.externals.push("phonemize");
+      } else {
+        config.externals = [config.externals, "phonemize"];
+      }
+    } else {
       // Client-side fallbacks
       config.resolve.fallback = {
         ...config.resolve.fallback,
