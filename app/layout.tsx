@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   description: "Transform English text into EiC (English in Color) system",
 };
 
+// Force dynamic rendering to prevent build timeout
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function RootLayout({
   children,
 }: {
