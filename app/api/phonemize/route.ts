@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { phonemize } from "phonemize";
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,6 +8,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Text is required" }, { status: 400 });
     }
 
+    // Dynamic import to load phonemize from node_modules at runtime
+    // This works because phonemize is marked as external in webpack config
+    const { phonemize } = await import("phonemize");
     const phonetic = phonemize(text);
 
     return NextResponse.json({ phonetic });
