@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { phonemize } from "phonemize";
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,8 +9,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Text is required" }, { status: 400 });
     }
 
-    // Dynamic import to avoid bundling phonemize during build
-    const { phonemize } = await import("phonemize");
     const phonetic = phonemize(text);
 
     return NextResponse.json({ phonetic });

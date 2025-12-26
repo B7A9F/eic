@@ -5,20 +5,8 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Exclude phonemize from webpack compilation
-  // It will be loaded dynamically at runtime via import()
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.externals = config.externals || [];
-      if (Array.isArray(config.externals)) {
-        config.externals.push("phonemize");
-      } else {
-        config.externals = [config.externals, "phonemize"];
-      }
-    }
-    return config;
-  },
-  // Exclude phonemize from build traces collection
+  // Exclude phonemize from build traces collection (speeds up build)
+  // This prevents Next.js from scanning phonemize dependencies during build
   experimental: {
     outputFileTracingExcludes: {
       "*": ["node_modules/phonemize/**/*"],
