@@ -5,6 +5,12 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Exclude phonemize from build traces collection
+  experimental: {
+    outputFileTracingExcludes: {
+      "*": ["node_modules/phonemize/**/*"],
+    },
+  },
   // Exclude phonemize from webpack compilation completely
   webpack: (config, { isServer }) => {
     if (isServer) {
