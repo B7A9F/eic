@@ -5,6 +5,9 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Exclude phonemize from server bundle compilation
+  // It will be loaded from node_modules at runtime for API routes
+  serverExternalPackages: ["phonemize"],
   // Exclude phonemize from build traces collection (speeds up build)
   // This prevents Next.js from scanning phonemize dependencies during build
   experimental: {
