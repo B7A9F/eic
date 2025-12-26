@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "next": "^14.2.35",
-    "phonemize": "^1.1.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "text-to-ipa": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { phonemize } from "phonemize";
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,7 +8,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Text is required" }, { status: 400 });
     }
 
-    const phonetic = phonemize(text);
+    // Load text-to-ipa dynamically to avoid build issues
+    const TextToIPA = require("text-to-ipa");
+
+    // Split text into words and convert each to IPA
+    const words = text.toLowerCase().split(/\s+/);
+    const ipaWords = words.map((word) => {
+      const result = TextToIPA.lookup(word);
+      if (result && result.text) {
+        // If multiple pronunciations (separated by OR), take the first one
+        return result.text.split(" OR ")[0];
+      }
+      return word; // Return original word if not found
+    });
+
+    const phonetic = ipaWords.join(" ");
 
     return NextResponse.json({ phonetic });
   } catch (error) {
