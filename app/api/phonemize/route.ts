@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getDictionary } from "@/lib/phonetic-dictionary";
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,18 +9,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Text is required" }, { status: 400 });
     }
 
-    // Load text-to-ipa dynamically to avoid build issues
-    const TextToIPA = require("text-to-ipa");
+    const dictionary = getDictionary();
 
     // Split text into words and convert each to IPA
-    const words = text.toLowerCase().split(/\s+/);
+    const words = text
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((w) => w.length > 0);
     const ipaWords = words.map((word) => {
-      const result = TextToIPA.lookup(word);
-      if (result && result.text) {
-        // If multiple pronunciations (separated by OR), take the first one
-        return result.text.split(" OR ")[0];
-      }
-      return word; // Return original word if not found
+      // Remove punctuation for lookup
+      const cleanWord = word.replace(/[^\w'-]/g, "");
+      const ipa = dictionary.lookup(cleanWord);
+      return ipa || word; // Return IPA or original word if not found
     });
 
     const phonetic = ipaWords.join(" ");
