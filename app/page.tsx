@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 export default function Home() {
   const [inputText, setInputText] = useState("");
   const [phoneticOutput, setPhoneticOutput] = useState("");
+  const [eicOutput, setEicOutput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -27,6 +28,7 @@ export default function Home() {
 
           const data = await response.json();
           setPhoneticOutput(data.phonetic);
+          setEicOutput(data.eic || ""); // Will be populated when EiC processor is implemented
         } catch (error) {
           console.error("Error phonemizing text:", error);
           setPhoneticOutput("Error processing text");
@@ -50,6 +52,7 @@ export default function Home() {
   const handleClear = () => {
     setInputText("");
     setPhoneticOutput("");
+    setEicOutput("");
   };
 
   return (
@@ -64,7 +67,7 @@ export default function Home() {
       {/* Main Content */}
       <div className="flex flex-col md:flex-row h-[calc(100vh-73px)]">
         {/* Left Panel - Input */}
-        <div className="flex-1 flex flex-col border-r border-gray-200">
+        <div className="flex-1 flex flex-col border-r border-gray-200" style={{ maxWidth: '33.333%' }}>
           {/* Panel Header */}
           <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100">
             <span className="text-sm text-gray-500 uppercase">English</span>
@@ -103,8 +106,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Right Panel - Output */}
-        <div className="flex-1 flex flex-col">
+        {/* Middle Panel - IPA Output */}
+        <div className="flex-1 flex flex-col border-r border-gray-200" style={{ maxWidth: '33.333%' }}>
           {/* Panel Header */}
           <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100">
             <span className="text-sm text-gray-500 uppercase">IPA</span>
@@ -171,6 +174,57 @@ export default function Home() {
                   style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
                 >
                   Translation
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Panel - EiC Color Output */}
+        <div className="flex-1 flex flex-col" style={{ maxWidth: '33.333%' }}>
+          {/* Panel Header */}
+          <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100">
+            <span className="text-sm text-gray-500 uppercase">EiC Color</span>
+          </div>
+
+          {/* Output Area */}
+          <div className="flex-1 relative">
+            <div className="w-full h-full p-4 overflow-auto">
+              {isLoading ? (
+                <div className="flex items-center text-gray-400">
+                  <svg
+                    className="animate-spin h-5 w-5 mr-2"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  <span className="text-lg">Processing...</span>
+                </div>
+              ) : eicOutput ? (
+                <div
+                  className="text-lg leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: eicOutput }}
+                />
+              ) : (
+                <p
+                  className="text-lg text-gray-400"
+                  style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
+                >
+                  EiC Color Output
                 </p>
               )}
             </div>
